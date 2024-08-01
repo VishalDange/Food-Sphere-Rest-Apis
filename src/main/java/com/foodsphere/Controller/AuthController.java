@@ -20,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -97,7 +99,7 @@ public class AuthController {
 
         AuthResponse authResponse=new AuthResponse();
         authResponse.setJwt(jwt);
-        authResponse.setMessage("Register success");
+        authResponse.setMessage("Login Success");
         authResponse.setRole(USER_ROLE.valueOf(role));
 
         return new ResponseEntity<>(authResponse, HttpStatus.OK);
