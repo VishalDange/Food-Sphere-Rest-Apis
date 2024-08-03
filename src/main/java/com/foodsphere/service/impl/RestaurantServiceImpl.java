@@ -73,7 +73,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public List<Restaurant> getAllRestaurant() {
 
-        return getAllRestaurant();
+        return restaurantRepository.findAll();
     }
 
     @Override
@@ -111,10 +111,19 @@ public class RestaurantServiceImpl implements RestaurantService {
         dto.setTitle(restaurant.getName());
         dto.setId(restaurantId);
 
-        if(user.getFavourites().contains(dto)){
-            user.getFavourites().remove(dto);
+       boolean isFavourited=false;
+       List<RestaurantDto> favourites=user.getFavourites();
+       for(RestaurantDto favourite:favourites){
+           if(favourite.getId().equals(restaurantId)){
+               isFavourited=true;
+               break;
+           }
+       }
+
+        if(isFavourited){
+            favourites.removeIf(favourite ->favourite.getId().equals(restaurantId));
         }else {
-            user.getFavourites().add(dto);
+           favourites.add(dto);
         }
 
         userRepository.save(user);
