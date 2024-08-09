@@ -1,4 +1,6 @@
-FOODSPHERE 
+# FoodSphere
+
+## Introduction
 The purpose of this project is to create a modern online food delivery platform that connects restaurants with customers, allowing restaurant owners to effortlessly register their establishments and enabling customers to enjoy their favorite meals with ease.
 
 Key Features:
