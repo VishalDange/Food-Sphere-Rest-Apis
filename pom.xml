@@ -87,6 +87,11 @@
 			<version>0.11.5</version> <!-- Use the latest version -->
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>20.62.0</version> <!-- Use the latest version -->
+		</dependency>
 
 
 	</dependencies>

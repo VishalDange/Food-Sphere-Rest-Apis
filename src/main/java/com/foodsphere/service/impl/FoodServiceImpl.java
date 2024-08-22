@@ -9,6 +9,7 @@ import com.foodsphere.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,8 +19,6 @@ public class FoodServiceImpl implements FoodService {
 
     @Autowired
     private FoodRepository foodRepository;
-
-//    private FoodService foodService;
 
     @Override
     public Food createFood(CreateFoodRequest req, Category category, Restaurant restaurant) {
@@ -32,9 +31,10 @@ public class FoodServiceImpl implements FoodService {
         food.setName(req.getName());
         food.setImages(req.getImages());
         food.setPrice(req.getPrice());
-        food.setIngredients(req.getIngredientsItems());
+        food.setIngredients(req.getIngredients());
         food.setSeasonal(req.isSeasonal());
         food.setVegetarian(req.isVegetarian());
+        food.setCreationDate(new Date());
 
         Food saveFood=foodRepository.save(food);
         restaurant.getFoods().add(saveFood);
@@ -42,10 +42,11 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    public void deleteFood(long foodId) throws Exception {
+    public void deleteFood(Long foodId) throws Exception {
 
         Food food=findFoodById(foodId);
         food.setRestaurant(null);
+//        foodRepository.delete(food);
         foodRepository.save(food);
     }
 
@@ -62,7 +63,7 @@ public class FoodServiceImpl implements FoodService {
         } if(isSeasonal){
             foods=filterBySeasonal(foods,isSeasonal);
         }
-        if(foodCategory!=null && !foodCategory.equals("")){
+        if(foodCategory!=null && !foodCategory.isEmpty()){
             foods=filterByCategory(foods,foodCategory);
         }
 
@@ -113,6 +114,38 @@ public class FoodServiceImpl implements FoodService {
         food.setAvailable(!food.isAvailable());
 
        return foodRepository.save(food);
+    }
 
+    @Override
+    public Food updateFood(Long foodId, CreateFoodRequest req) throws Exception {
+        Food food = findFoodById(foodId);
+
+        if (req.getName() != null) {
+            food.setName(req.getName());
+        }
+
+        if (req.getDescription() != null) {
+            food.setDescription(req.getDescription());
+        }
+
+        if (req.getPrice() != null) {
+            food.setPrice(req.getPrice());
+        }
+
+        if (req.getImages() != null && !req.getImages().isEmpty()) {
+            food.setImages(req.getImages());
+        }
+
+        food.setAvailable(req.isVegetarian());
+
+        food.setVegetarian(req.isVegetarian());
+
+        food.setSeasonal(req.isSeasonal());
+
+        if (req.getIngredients() != null && !req.getIngredients().isEmpty()) {
+            food.setIngredients(req.getIngredients());
+        }
+
+        return foodRepository.save(food);
     }
 }

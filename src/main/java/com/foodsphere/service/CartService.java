@@ -4,6 +4,8 @@ import com.foodsphere.model.Cart;
 import com.foodsphere.model.CartItem;
 import com.foodsphere.request.AddCartItemRequest;
 
+import java.util.List;
+
 public interface CartService {
 
     public CartItem addItemToCart(AddCartItemRequest request, String jwt) throws Exception;
@@ -20,5 +22,6 @@ public interface CartService {
 
     public Cart clearCart(Long userId) throws Exception;
 
+    public List<CartItem> getAllCartItems(Long cartId) throws Exception;
 
 }

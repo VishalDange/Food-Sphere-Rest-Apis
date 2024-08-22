@@ -58,4 +58,15 @@ public class AdminFoodController {
 
         return new ResponseEntity<>(food, HttpStatus.OK);
     }
+
+    @PutMapping("/update/{foodId}")
+    public ResponseEntity<Food> updateFood(
+            @PathVariable Long foodId,
+            @RequestBody CreateFoodRequest req,
+            @RequestHeader("Authorization") String jwt) throws Exception {
+
+        Food updatedFood = foodService.updateFood(foodId, req);
+
+        return new ResponseEntity<>(updatedFood, HttpStatus.OK);
+    }
 }

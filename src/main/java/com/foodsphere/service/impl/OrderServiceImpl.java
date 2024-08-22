@@ -9,11 +9,9 @@ import com.foodsphere.request.OrderRequest;
 import com.foodsphere.service.CartService;
 import com.foodsphere.service.OrderService;
 import com.foodsphere.service.RestaurantService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +38,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartService cartService;
+
+
 
     @Override
     public Order createOrder(OrderRequest order, User user) throws Exception {
@@ -69,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setIngredients(cartItem.getIngredients());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setTotalPrice(cartItem.getTotalPrice());
+
 
             OrderItem savedOrderItem=orderItemRepository.save(orderItem);
             orderItems.add(savedOrderItem);
@@ -102,6 +103,14 @@ public class OrderServiceImpl implements OrderService {
         Order order=findOrderById(orderId);
         orderRepository.deleteById(orderId);
 
+    }
+
+    @Override
+    public void deleteOrder(Long orderId) throws Exception {
+        Order order = findOrderById(orderId);
+
+        order.getRestaurant().getOrder().remove(order);
+        orderRepository.delete(order);
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/food ")
+@RequestMapping("/api/food")
 public class FoodController {
 
     @Autowired
@@ -38,13 +38,39 @@ public class FoodController {
         return new ResponseEntity<>(foods, HttpStatus.OK);
     }
 
-    @GetMapping("/restaurant/restaurantId")
-    public ResponseEntity<List<Food>> getRestaurantFood(@RequestParam boolean vegetarian,@RequestParam boolean nonVeg, @RequestParam boolean seasonal, @RequestParam(required = false) String food_Category,@PathVariable Long restaurantId,@RequestHeader("Authorization") String jwt) throws Exception{
+//    @GetMapping("/restaurant/{restaurantId}")
+//    public ResponseEntity<List<Food>> getRestaurantFood(
+//            @PathVariable Long restaurantId,
+//            @RequestParam boolean vegetarian,
+//            @RequestParam boolean nonveg,
+//            @RequestParam boolean seasonal,
+//            @RequestParam(required = false) String food_category,
+//            @RequestHeader("Authorization") String jwt) throws Exception {
+//
+//        User user = userService.findUserByJwtToken(jwt);
+//        List<Food> foods = foodService.getRestaurantFood(restaurantId, vegetarian, nonveg, seasonal, food_category);
+//
+//        return new ResponseEntity<>(foods, HttpStatus.OK);
+//    }
 
-        User user=userService.findUserByJwtToken(jwt);
+    @GetMapping("/restaurant/{restaurantId}")
+    public ResponseEntity<List<Food>> getRestaurantFood(
+            @PathVariable Long restaurantId,
+            @RequestParam(required = false) Boolean vegetarian,
+            @RequestParam(required = false) Boolean nonveg,
+            @RequestParam(required = false) Boolean seasonal,
+            @RequestParam(required = false) String food_category,
+            @RequestHeader("Authorization") String jwt) throws Exception {
 
-        List<Food> foods=foodService.getRestaurantFood(restaurantId,vegetarian,nonVeg,seasonal,food_Category);
+        User user = userService.findUserByJwtToken(jwt);
+
+        List<Food> foods = foodService.getRestaurantFood(restaurantId,
+                Boolean.TRUE.equals(vegetarian),
+                Boolean.TRUE.equals(nonveg),
+                Boolean.TRUE.equals(seasonal),
+                food_category);
 
         return new ResponseEntity<>(foods, HttpStatus.OK);
     }
+
 }

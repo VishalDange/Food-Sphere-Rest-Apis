@@ -46,22 +46,47 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setOpeningHours(req.getOpeningHours());
         restaurant.setRegistrationDate(LocalDateTime.now());
         restaurant.setOwner(user);
+        restaurant.setOpen(true);
         return restaurantRepository.save(restaurant);
     }
 
     @Override
     public Restaurant updateRestaurant(Long restaurantId, CreateRestaurantRequest updatedRestaurant) throws Exception {
-        Restaurant restaurant=findRestaurantById(restaurantId);
+        Restaurant restaurant = findRestaurantById(restaurantId);
 
-        if(restaurant.getCuisineType()!=null){
+        if (updatedRestaurant.getCuisineType() != null) {
             restaurant.setCuisineType(updatedRestaurant.getCuisineType());
         }
 
-        if(restaurant.getDescription()!=null){
+        if (updatedRestaurant.getName() != null) {
             restaurant.setName(updatedRestaurant.getName());
         }
+
+        if (updatedRestaurant.getDescription() != null) {
+            restaurant.setDescription(updatedRestaurant.getDescription());
+        }
+
+        if (updatedRestaurant.getContactInformation() != null) {
+            restaurant.setContactInformation(updatedRestaurant.getContactInformation());
+        }
+
+        if (updatedRestaurant.getOpeningHours() != null) {
+            restaurant.setOpeningHours(updatedRestaurant.getOpeningHours());
+        }
+
+        if (updatedRestaurant.getImages() != null) {
+            restaurant.setImages(updatedRestaurant.getImages());
+        }
+
+        // Check if the `isOpen` status should be updated
+        if (updatedRestaurant.getOpen() != restaurant.isOpen()) {
+            restaurant.setOpen(updatedRestaurant.getOpen());
+        }
+
         return restaurantRepository.save(restaurant);
     }
+
+
 
     @Override
     public void deleteRestaurant(Long restaurantId) throws Exception {

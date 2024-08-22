@@ -21,44 +21,37 @@ import java.util.Collections;
 public class AppConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-
-        http.sessionManagement(management ->management.sessionCreationPolicy(
-                SessionCreationPolicy.STATELESS ))
-                .authorizeHttpRequests(Authorize -> Authorize.requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN").requestMatchers("/api/**").authenticated().anyRequest().permitAll()).addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class).csrf(csrf ->csrf.disable()).cors(cors->cors.configurationSource(corsConfigurationSource()));
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.sessionManagement(management -> management.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
+                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/auth/**").permitAll() // Ensure authentication endpoints are accessible
+                        .anyRequest().permitAll())
+                .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration cfg=new CorsConfiguration();
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOrigins(Arrays.asList(
+                "https://FoodSphere.app", "http://localhost:3000"
+        ));
+        cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cfg.setAllowCredentials(true);
+        cfg.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        cfg.setMaxAge(3600L);
 
-                cfg.setAllowedOrigins(Arrays.asList(
-                        "https://FoodSphere.app","http://localhost:3000"
-                ));
-
-                cfg.setAllowedMethods(Collections.singletonList("*"));
-
-                cfg.setAllowCredentials(true);
-
-                cfg.setAllowedHeaders(Collections.singletonList("*"));
-
-                cfg.setAllowedHeaders(Arrays.asList("Authorization"));
-
-                cfg.setMaxAge(3600L);
-
-                return cfg;
-            }
-        };
+        return request -> cfg;
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }
+

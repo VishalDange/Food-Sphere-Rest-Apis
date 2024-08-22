@@ -25,5 +25,5 @@ public class CreateFoodRequest {
 
     private boolean isSeasonal;
 
-    private List<IngredientsItem> ingredientsItems;
+    private List<IngredientsItem> ingredients;
 }

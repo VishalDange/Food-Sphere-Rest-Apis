@@ -14,6 +14,7 @@ import com.foodsphere.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,16 +67,23 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartItem updateCartItemQuantity(Long cartItemId, int quantity) throws Exception {
-        Optional<CartItem> cartItem=cartItemRepository.findById(cartItemId);
-        if(cartItem.isEmpty()){
-            throw new Exception("cart item not Found");
+        Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemId);
+        if (cartItemOptional.isEmpty()) {
+            throw new Exception("Cart item not found with ID: " + cartItemId);
         }
 
-        CartItem item=cartItem.get();
+        CartItem item = cartItemOptional.get();
+        System.out.println("Original quantity: " + item.getQuantity());
+        System.out.println("New quantity: " + quantity);
+
         item.setQuantity(quantity);
-        item.setTotalPrice(item.getFood().getPrice()*quantity);
-        return cartItemRepository.save(item);
+        item.setTotalPrice(item.getFood().getPrice() * quantity);
+
+        CartItem updatedCartItem = cartItemRepository.save(item);
+
+        return updatedCartItem;
     }
+
 
     @Override
     public Cart removeItemFromCart(Long cartItemId, String jwt) throws Exception {
@@ -132,4 +140,19 @@ public class CartServiceImpl implements CartService {
         cart.getItem().clear();
         return cartRepository.save(cart);
     }
+
+    @Override
+    public List<CartItem> getAllCartItems(Long cartId) throws Exception {
+        Optional<Cart> cartOptional = cartRepository.findById(cartId);
+        if (cartOptional.isEmpty()) {
+            throw new Exception("Cart not found with id: " + cartId);
+        }
+        Cart cart = cartOptional.get();
+        List<CartItem> items = cart.getItem();
+        System.out.println("Cart ID: " + cartId);
+        System.out.println("Cart Items: " + items);
+        return items;
+    }
+
+
 }

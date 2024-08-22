@@ -14,6 +14,8 @@ public interface OrderService {
 
     public void cancelOrder(Long orderId) throws Exception;
 
+    public  void deleteOrder(Long orderId) throws Exception;
+
     public List<Order> getUsersOrder(Long userId) throws Exception;
 
     public List<Order> getRestaurantsOrder(Long restaurantId, String orderStatus) throws Exception;

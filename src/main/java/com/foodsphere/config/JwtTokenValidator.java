@@ -1,6 +1,5 @@
 package com.foodsphere.config;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,31 +23,30 @@ public class JwtTokenValidator extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String jwt=request.getHeader(JwtConstant.JWT_HEADER);
+        String jwt = request.getHeader(JwtConstant.JWT_HEADER);
 
-//        Bearer Token ->we take 7 to extract the bearer token
-        if(jwt!=null){
-            jwt=jwt.substring(7);
-            try{
-                SecretKey key= Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
+        if (jwt != null && jwt.startsWith("Bearer ")) {
+            jwt = jwt.substring(7); // Remove "Bearer " prefix
+            try {
+                SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
 
-                Claims claims= Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+                Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
 
-                String email=String.valueOf(claims.get("email"));
+                String email = claims.get("email", String.class);
+                String authorities = claims.get("authorities", String.class);
 
-                String authorities=String.valueOf(claims.get("authorities"));
+                List<GrantedAuthority> auth = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 
-//                ROLE_CUSTOMER, ROLE_ADMIN
-                List<GrantedAuthority> auth= AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-
-                Authentication authentication=new UsernamePasswordAuthenticationToken(email,null,auth);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auth);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }catch (Exception e){
-                throw new BadCredentialsException("Invalid token..........");
+            } catch (Exception e) {
+                // Log detailed error message
+                logger.error("Token validation failed: ", e);
+                throw new BadCredentialsException("Invalid token");
             }
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }

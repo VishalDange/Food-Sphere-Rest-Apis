@@ -78,6 +78,20 @@ public class IngredientServiceImpl implements IngredientsService {
     }
 
     @Override
+    public IngredientCategory updateIngredientCategory(Long categoryId, String newName) throws Exception {
+        Optional<IngredientCategory> optionalCategory = ingredientCategoryRepository.findById(categoryId);
+
+        if (optionalCategory.isEmpty()) {
+            throw new Exception("Ingredient Category not found with id: " + categoryId);
+        }
+
+        IngredientCategory category = optionalCategory.get();
+        category.setName(newName);
+
+        return ingredientCategoryRepository.save(category);
+    }
+
+    @Override
     public IngredientsItem updateStock(Long id) throws Exception {
 
         Optional<IngredientsItem> optionalIngredientsItem=ingredientItemRepository.findById(id);
